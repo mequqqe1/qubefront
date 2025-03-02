@@ -1,0 +1,103 @@
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .modal-content {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    width: 600px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    position: relative;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  }
+  
+  .modal-content h2 {
+    color: #333;
+    font-size: 20px;
+    margin-bottom: 20px;
+    margin-top: 0;
+    text-align: center;
+  }
+  
+  .tree-container {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+  }
+  
+  .tree {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .tree li {
+    margin-bottom: 10px;
+  }
+  
+  .tree .category {
+    font-weight: bold;
+    color: #6b48ff;
+    cursor: pointer;
+  }
+  
+  .tree .group {
+    color: #555;
+    margin-left: 20px;
+    cursor: pointer;
+  }
+  
+  .tree .product {
+    color: #333;
+    margin-left: 40px;
+  }
+  
+  .tree ul {
+    list-style: none;
+    padding-left: 20px;
+  }
+  
+  .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  
+  .add-button {
+    background: #dc3545;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.3s;
+  }
+  
+  .add-button:hover {
+    background: #c82333;
+  }
+  
+  .loading {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+  }
+  
+  .error {
+    text-align: center;
+    padding: 20px;
+    color: #dc3545;
+  }

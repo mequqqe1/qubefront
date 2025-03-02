@@ -1,0 +1,133 @@
+.header {
+    position: fixed;
+    top: 0;
+    left: 250px; /* Смещение для Sidebar */
+    right: 0;
+    background: #fff;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    font-family: Arial, sans-serif;
+  }
+  
+  .header-left {
+    display: flex;
+    align-items: center;
+  }
+  
+  .header-logo {
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+  }
+  
+  .header-nav {
+    margin-left: 20px;
+  }
+  
+  .nav-link {
+    color: #6b48ff;
+    text-decoration: none;
+    margin-right: 15px;
+    font-size: 14px;
+    transition: color 0.3s;
+  }
+  
+  .nav-link.active {
+    font-weight: bold;
+  }
+  
+  .nav-link:hover {
+    color: #5a3ed9;
+  }
+  
+  .header-stats {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  
+  .stat-card {
+    background: #f4f4f4;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .stat-card span {
+    color: #666;
+  }
+  
+  .stat-card strong {
+    color: #333;
+    font-weight: bold;
+  }
+  
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+  }
+  
+  .notification-btn {
+    background: none;
+    border: none;
+    color: #666;
+    font-size: 18px;
+    cursor: pointer;
+    transition: color 0.3s;
+  }
+  
+  .notification-btn:hover {
+    color: #6b48ff;
+  }
+  
+  .profile-img {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+  
+  .profile-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    min-width: 150px;
+    margin-top: 5px;
+    z-index: 1001;
+  }
+  
+  .profile-dropdown ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .profile-dropdown li {
+    padding: 10px 15px;
+    color: #333;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: background 0.3s;
+  }
+  
+  .profile-dropdown li:hover {
+    background: #f4f4f4;
+  }
+  
+  .dropdown-icon {
+    margin-right: 10px;
+    font-size: 14px;
+  }
