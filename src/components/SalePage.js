@@ -5,8 +5,6 @@ import ProductCatalog from './ProductCatalog';
 
 const SalePage = ({ token }) => {
   const [clientId, setClientId] = useState('');
-  const [device, setDevice] = useState('');
-  const [note, setNote] = useState('');
   const [saleItems, setSaleItems] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [quantity, setQuantity] = useState(1);
@@ -39,8 +37,8 @@ const SalePage = ({ token }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!clientId || !device) {
-      setMessage('Пожалуйста, выберите клиента и устройство.');
+    if (!clientId) {
+      setMessage('Пожалуйста, выберите клиента.');
       return;
     }
     try {
@@ -53,8 +51,6 @@ const SalePage = ({ token }) => {
         },
         body: JSON.stringify({
           clientId: parseInt(clientId),
-          device,
-          note,
           saleItems: saleItems.map(item => ({
             productId: item.productId,
             quantity: item.quantity,
@@ -68,8 +64,6 @@ const SalePage = ({ token }) => {
       setMessage('Продажа успешно создана!');
       setSaleItems([]);
       setClientId('');
-      setDevice('');
-      setNote('');
     } catch (err) {
       setMessage(`Ошибка: ${err.message}`);
     }
@@ -87,29 +81,41 @@ const SalePage = ({ token }) => {
             readOnly
             placeholder="Выберите клиента"
           />
-          <button type="button" onClick={() => setIsClientModalOpen(true)} className="select-button">
+          <button type="button" onClick={() => setIsClientModalOpen(true)} className="select-client-button">
             Выбрать клиента
           </button>
         </div>
         <div className="form-group">
-          <label>Устройство:</label>
-          <input
-            type="text"
-            value={device}
-            onChange={(e) => setDevice(e.target.value)}
-            placeholder="Введите устройство"
-          />
-          <button type="button" onClick={() => setIsProductModalOpen(true)} className="select-button">
+          <label>Выбор товара:</label>
+          <button type="button" onClick={() => setIsProductModalOpen(true)} className="select-product-button">
             Выбрать товар
           </button>
-        </div>
-        <div className="form-group">
-          <label>Примечание:</label>
-          <textarea
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
-            placeholder="Введите примечание"
-          />
+          {selectedProduct && (
+            <div className="product-selection">
+              <span>{selectedProduct.name}</span>
+              <input
+                type="number"
+                value={quantity}
+                onChange={(e) => setQuantity(e.target.value)}
+                placeholder="Количество"
+                min="1"
+              />
+              <input
+                type="number"
+                value={unitPrice}
+                onChange={(e) => setUnitPrice(e.target.value)}
+                placeholder="Цена за единицу"
+                min="0"
+              />
+              <select value={priceTypeId} onChange={(e) => setPriceTypeId(e.target.value)}>
+                <option value="1">Розничная</option>
+                <option value="2">Оптовая</option>
+              </select>
+              <button type="button" onClick={handleAddProduct} className="add-button">
+                Добавить
+              </button>
+            </div>
+          )}
         </div>
         <div className="form-group">
           <h3>Выбранные товары</h3>

@@ -1,181 +1,102 @@
-import React, { useState } from 'react';
-import './SalePage.css';
-import ClientSelectionModal from './ClientSelectionModal';
-import ProductCatalog from './ProductCatalog';
+import React, { useState, useEffect } from 'react';
+import './ServicePage.css';
+import TaskDetailModal from './TaskDetailModal';
 
-const SalePage = ({ token }) => {
-  const [clientId, setClientId] = useState('');
-  const [device, setDevice] = useState('');
-  const [note, setNote] = useState('');
-  const [saleItems, setSaleItems] = useState([]);
-  const [selectedProduct, setSelectedProduct] = useState(null);
-  const [quantity, setQuantity] = useState(1);
-  const [unitPrice, setUnitPrice] = useState('');
-  const [priceTypeId, setPriceTypeId] = useState(1);
-  const [message, setMessage] = useState('');
-  const [isClientModalOpen, setIsClientModalOpen] = useState(false);
-  const [isProductModalOpen, setIsProductModalOpen] = useState(false);
+const ServicePage = ({ token }) => {
+  const [tasks, setTasks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [tasksPerPage] = useState(10);
+  const [selectedTaskId, setSelectedTaskId] = useState(null);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 
-  const handleClientSelect = (client) => {
-    setClientId(client.id);
-  };
+  useEffect(() => {
+    const fetchTasks = async () => {
+      if (!token) {
+        setError('Токен не найден. Пожалуйста, войдите заново.');
+        setLoading(false);
+        return;
+      }
+      try {
+        const response = await fetch('https://localhost:7073/api/Account/tasks/company', {
+          headers: {
+            'accept': '*/*',
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+        if (!response.ok) throw new Error('Ошибка при загрузке задач');
+        const data = await response.json();
+        setTasks(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchTasks();
+  }, [token]);
 
-  const handleAddProduct = () => {
-    if (selectedProduct && quantity > 0 && unitPrice) {
-      const newItem = {
-        productId: selectedProduct.id,
-        quantity: parseInt(quantity),
-        unitPrice: parseFloat(unitPrice),
-        priceTypeId: parseInt(priceTypeId),
-        name: selectedProduct.name || 'Неизвестно',
-      };
-      setSaleItems([...saleItems, newItem]);
-      setSelectedProduct(null);
-      setQuantity(1);
-      setUnitPrice('');
-      setIsProductModalOpen(false);
-    }
-  };
+  const indexOfLastTask = currentPage * tasksPerPage;
+  const indexOfFirstTask = indexOfLastTask - tasksPerPage;
+  const currentTasks = tasks.slice(indexOfFirstTask, indexOfLastTask);
+  const totalPages = Math.ceil(tasks.length / tasksPerPage);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!clientId || !device) {
-      setMessage('Пожалуйста, выберите клиента и устройство.');
-      return;
-    }
-    try {
-      const response = await fetch('https://localhost:7073/api/Sales', {
-        method: 'POST',
-        headers: {
-          'accept': '*/*',
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          clientId: parseInt(clientId),
-          device,
-          note,
-          saleItems: saleItems.map(item => ({
-            productId: item.productId,
-            quantity: item.quantity,
-            unitPrice: item.unitPrice,
-            priceTypeId: item.priceTypeId,
-          })),
-        }),
-      });
-      if (!response.ok) throw new Error(`Ошибка: ${response.statusText} (${response.status})`);
-      const data = await response.json();
-      setMessage('Продажа успешно создана!');
-      setSaleItems([]);
-      setClientId('');
-      setDevice('');
-      setNote('');
-    } catch (err) {
-      setMessage(`Ошибка: ${err.message}`);
-    }
-  };
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
-    <div className="sale-container">
-      <h1 className="sale-title">Новая продажа</h1>
-      <div className="sale-form">
-        <div className="form-row">
-          <div className="form-group">
-            <label>Клиент:</label>
-            <input
-              type="text"
-              value={clientId ? `Клиент #${clientId}` : ''}
-              readOnly
-              placeholder="Выберите клиента"
-              className="form-input"
-            />
-            <button
-              type="button"
-              onClick={() => setIsClientModalOpen(true)}
-              className="select-button"
-            >
-              Выбрать
-            </button>
-          </div>
-          <div className="form-group">
-            <label>Устройство:</label>
-            <input
-              type="text"
-              value={device}
-              onChange={(e) => setDevice(e.target.value)}
-              placeholder="Введите устройство"
-              className="form-input"
-            />
-          </div>
-        </div>
-        <div className="form-row">
-          <div className="form-group full-width">
-            <label>Примечание:</label>
-            <textarea
-              value={note}
-              onChange={(e) => setNote(e.target.value)}
-              placeholder="Введите примечание"
-              className="form-textarea"
-            />
-          </div>
-        </div>
-        <div className="form-row">
-          <div className="form-group full-width">
-            <h3>Выбранные товары</h3>
-            <table className="sale-items-table">
-              <thead>
-                <tr>
-                  <th>Товар</th>
-                  <th>Количество</th>
-                  <th>Цена</th>
-                  <th>Подитог</th>
-                </tr>
-              </thead>
-              <tbody>
-                {saleItems.map((item, index) => (
-                  <tr key={index}>
-                    <td>{item.name}</td>
-                    <td>{item.quantity}</td>
-                    <td>{item.unitPrice}</td>
-                    <td>{item.quantity * item.unitPrice}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            <button
-              type="button"
-              onClick={() => setIsProductModalOpen(true)}
-              className="add-product-button"
-            >
-              Добавить товар
-            </button>
-          </div>
-        </div>
-        <div className="form-actions">
-          <button type="submit" onClick={handleSubmit} className="submit-button">
-            Создать продажу
-          </button>
-          {message && <div className={`message ${message.includes('Ошибка') ? 'error' : ''}`}>{message}</div>}
+    <div className="service-container">
+      <div className="header">
+        <div className="controls">
+          <button className="control-btn">📄</button>
+          <button className="control-btn">📊</button>
+          <button className="control-btn">🔍</button>
+          <button className="control-btn">⚙️</button>
+          <input type="date" className="date-picker" />
+          <input type="date" className="date-picker" />
+          <input type="text" placeholder="Поиск..." className="search-input" />
         </div>
       </div>
-      {isClientModalOpen && (
-        <ClientSelectionModal
-          token={token}
-          onClose={() => setIsClientModalOpen(false)}
-          onClientSelect={handleClientSelect}
-        />
-      )}
-      {isProductModalOpen && (
-        <ProductCatalog
-          token={token}
-          onSelectProduct={(product) => {
-            setSelectedProduct(product);
-            setIsProductModalOpen(false);
-          }}
-        />
+      <div className="table-container">
+        <table className="tasks-table">
+          <thead>
+            <tr>
+              <th>Ремонт</th>
+              <th>Дата</th>
+              <th>Статус</th>
+              <th>Заказчик</th>
+              <th>Устройство</th>
+              <th>К оплате</th>
+              <th>Оплачено</th>
+            </tr>
+          </thead>
+          <tbody>
+            {currentTasks.map((task) => (
+              <tr key={task.id} onDoubleClick={() => setIsDetailModalOpen(true)}>
+                <td>#{task.id}</td>
+                <td>{new Date(task.date).toLocaleDateString()}</td>
+                <td className={`status ${task.status.toLowerCase()}`}>{task.status}</td>
+                <td>{task.client}</td>
+                <td>{task.device}</td>
+                <td>{task.amount}</td>
+                <td>{task.paid}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div className="pagination">
+        <button onClick={() => paginate(currentPage - 1)} disabled={currentPage === 1}>Назад</button>
+        {[...Array(totalPages)].map((_, i) => (
+          <button key={i} onClick={() => paginate(i + 1)} className={currentPage === i + 1 ? 'active' : ''}>{i + 1}</button>
+        ))}
+        <button onClick={() => paginate(currentPage + 1)} disabled={currentPage === totalPages}>Вперед</button>
+      </div>
+      {isDetailModalOpen && (
+        <TaskDetailModal task={tasks.find(task => task.id === selectedTaskId)} onClose={() => setIsDetailModalOpen(false)} />
       )}
     </div>
   );
 };
 
-export default SalePage;
+export default ServicePage;
