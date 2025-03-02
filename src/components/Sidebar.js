@@ -1,8 +1,15 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Sidebar.css';
 import { FaUser, FaBell, FaWarehouse, FaCog, FaChartBar, FaMoneyBillWave, FaClipboardList, FaShoppingCart, FaTools, FaBriefcase, FaDatabase } from 'react-icons/fa';
 
 const Sidebar = ({ onNewRepairClick, onProductsClick, onSaleClick }) => {
+  const navigate = useNavigate();
+
+  const handleServiceClick = () => {
+    navigate('/service');
+  };
+
   return (
     <div className="sidebar">
       <div className="sidebar-header">
@@ -40,7 +47,7 @@ const Sidebar = ({ onNewRepairClick, onProductsClick, onSaleClick }) => {
         <li className="menu-item" onClick={onProductsClick}>
           <FaShoppingCart className="menu-icon" /> Товары
         </li>
-        <li className="menu-item">
+        <li className="menu-item" onClick={handleServiceClick}>
           <FaTools className="menu-icon" /> Сервис
         </li>
         <li className="menu-item">
